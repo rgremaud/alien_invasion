@@ -1,7 +1,9 @@
 import sys
 from time import sleep
+from pathlib import Path
 
 import pygame
+import json
 
 from settings import Settings
 from game_stats import GameStats
@@ -92,8 +94,8 @@ class AlienInvasion:
             self.sb.prep_level()
             self.sb.prep_ships()
             self.settings.initialize_dynamic_settings()
-            self.settings.increase_speed()
-            self.settings.increase_speed()
+            for _ in range(2):
+                self.settings.increase_speed()
             self._start_game(self)
 
             # Hide the mouse cursor.
@@ -103,9 +105,8 @@ class AlienInvasion:
             self.sb.prep_level()
             self.sb.prep_ships()
             self.settings.initialize_dynamic_settings()
-            self.settings.increase_speed()
-            self.settings.increase_speed()
-            self.settings.increase_speed()
+            for _ in range(3):
+                self.settings.increase_speed()
             self._start_game(self)
 
             # Hide the mouse cursor.
@@ -132,11 +133,19 @@ class AlienInvasion:
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
+            # Add logic here to store high score to external file
+            self._save_high_score()
             sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
         elif event.key == pygame.K_p:
             self._start_game()
+    
+    def _save_high_score(self):
+        """save high score on game close"""
+        path = Path('highscore.json')
+        contents = json.dumps(self.stats.high_score)
+        path.write_text(contents)
     
     def _check_keyup_events(self, event):
         """Respond to key releases"""
